@@ -1,0 +1,33 @@
+package models
+
+import (
+	"regexp"
+
+	"fonates.backend/pkg/utils"
+	"gorm.io/gorm"
+)
+
+type DonationLink struct {
+	gorm.Model `json:"-"`
+	Link       string `json:"link" gorm:"unique;not null"`
+	Username   string `json:"username" gorm:"unique;not null"`
+	Address    string `json:"address" gorm:"unique;not null"`
+	Status     string `json:"status"`
+}
+
+func InitDonationLink() DonationLink {
+	return DonationLink{
+		Status: "INACTIVE",
+	}
+}
+
+func (d DonationLink) Validate() bool {
+	regexpLink := regexp.MustCompile(`^https:\/\/fonates\.com\/donates\/[a-zA-Z0-9_]{3,16}$`)
+	regexpUsername := regexp.MustCompile(`^[a-zA-Z0-9_]{3,16}$`)
+	isValidAddress := utils.ValidateTonAddress(d.Address)
+	return regexpLink.MatchString(d.Link) && regexpUsername.MatchString(d.Username) && isValidAddress
+}
+
+func (d DonationLink) Create(store *gorm.DB) (DonationLink, error) {
+	return d, store.Create(&d).Error
+}

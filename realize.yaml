@@ -1,0 +1,15 @@
+settings:
+  legacy:
+    force: false
+    interval: 0s
+schema:
+- name: fonates.backend
+  path: .
+  commands:
+    run:
+      status: true
+  watcher:
+    paths:
+    - /
+    extensions:
+    - go
