@@ -29,8 +29,8 @@ jobs:
       - name: Build
         run: make build
 
-      # - name: Stop and delete
-      #   run: pm2 stop fonates.backend && pm2 delete fonates.backend
+      - name: Stop and delete
+        run: pm2 stop fonates.backend && pm2 delete fonates.backend
 
       - name: Start
         run: pm2 start 'make prod' --name=tonstore.fonates
