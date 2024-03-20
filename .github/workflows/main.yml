@@ -1,0 +1,36 @@
+name: CI/CD
+
+on:
+  push:
+    branches:
+      - 'main'
+  pull_request:
+    branches:
+      - 'main'
+
+jobs:
+  build:
+    runs-on: self-hosted
+    if: github.ref == 'refs/heads/main'
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Create .env.production
+        env:
+          PRODUCTION_ENV_VARS: ${{ secrets.PRODUCTION_ENV_VARS }}
+        run: echo "$PRODUCTION_ENV_VARS" > ${{ github.workspace }}/.env.production
+
+      - name: Set up Go
+        uses: actions/setup-go@v4
+        with:
+          go-version: '1.20'
+
+      - name: Build
+        run: make build
+
+      # - name: Stop and delete
+      #   run: pm2 stop fonates.backend && pm2 delete fonates.backend
+
+      - name: Start
+        run: pm2 start 'make prod' --name=tonstore.fonates
