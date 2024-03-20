@@ -52,33 +52,3 @@ func (h *Handlers) CreateLinkHandler(w http.ResponseWriter, r *http.Request) {
 		"status": "ok",
 	})
 }
-
-// linksRouter := router.PathPrefix("/links").Subrouter()
-// {
-// 	linksRouter.HandleFunc("/create", func(w http.ResponseWriter, r *http.Request) {
-// 		var link models.DonationLink
-// 		link.Address = "address"
-// 		link.Status = "status"
-// 		link.Username = "username"
-// 		link.Link = "link"
-
-// 		store.Create(&link)
-
-// 		var key models.KeysActivationLink
-// 		key.Status = "INACTIVE"
-// 		key.Key = uuid.New()
-// 		key.DonationLinkID = int(link.ID)
-
-// 		store.Create(&key)
-
-// 		w.WriteHeader(http.StatusOK)
-// 		w.Write([]byte("Create link"))
-// 	}).Methods("POST")
-// 	linksRouter.HandleFunc("/{address}", CreateLinkHandler).Methods("GET")
-// 	linksRouter.HandleFunc("/{address}/activate", HealthHandler).Methods("UPDATE")
-// }
-
-// pluginRouter := router.PathPrefix("/plugins").Subrouter()
-// {
-// 	pluginRouter.HandleFunc("/generate/{address}", GeneratePluginHandler).Methods("POST")
-// }

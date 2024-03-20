@@ -25,11 +25,9 @@ func (r *router) initLinksRoutes() *mux.Router {
 }
 
 func (r *router) initPluginRoutes() *mux.Router {
-	pluginRoutes := r.Router.PathPrefix("/plugins").Subrouter()
+	pluginRoutes := r.Router.PathPrefix("/plugin").Subrouter()
 	{
-		pluginRoutes.HandleFunc("/create", func(w http.ResponseWriter, r *http.Request) {}).Methods("POST")
-		pluginRoutes.HandleFunc("/{address}", func(w http.ResponseWriter, r *http.Request) {}).Methods("GET")
-		pluginRoutes.HandleFunc("/{address}/activate", func(w http.ResponseWriter, r *http.Request) {}).Methods("UPDATE")
+		pluginRoutes.HandleFunc("/{address}/generate", r.Handlers.GeneratePlugin).Methods("GET")
 	}
 
 	return r.Router
