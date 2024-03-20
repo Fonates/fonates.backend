@@ -1,0 +1,3 @@
+[submodule "obs.alerts.plagin"]
+	path = obs.alerts.plagin
+	url = https://github.com/Fonates/obs.alerts.plagin.git
