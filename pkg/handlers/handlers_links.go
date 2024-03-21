@@ -57,7 +57,6 @@ func (h *Handlers) CreateLink(w http.ResponseWriter, r *http.Request) {
 func (h *Handlers) GetLinkByAddress(w http.ResponseWriter, r *http.Request) {
 	vars := mux.Vars(r)
 	address := vars["address"]
-	w.Header().Set("Access-Control-Allow-Origin", "*")
 
 	link, err := models.InitDonationLink().GetByAddress(h.Store, address)
 	if err != nil {
@@ -80,6 +79,8 @@ func (h *Handlers) GetLinkByAddress(w http.ResponseWriter, r *http.Request) {
 func (h *Handlers) ActivateLink(w http.ResponseWriter, r *http.Request) {
 	vars := mux.Vars(r)
 	address := vars["address"]
+	w.Header().Set("Access-Control-Allow-Origin", "*")
+
 	if address == "" {
 		h.response(w, http.StatusBadRequest, map[string]string{
 			"error": "Address not provided",
@@ -127,7 +128,7 @@ func (h *Handlers) ActivateLink(w http.ResponseWriter, r *http.Request) {
 
 	if err := link.Activate(h.Store); err != nil {
 		h.response(w, http.StatusInternalServerError, map[string]string{
-			"error":  "Error activating link",
+			"error": "Error activating link",
 		})
 		return
 	}
