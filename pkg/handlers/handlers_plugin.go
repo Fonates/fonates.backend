@@ -48,7 +48,16 @@ func (h *Handlers) GeneratePlugin(w http.ResponseWriter, r *http.Request) {
 
 	// relativePluginDir := filepath.Join("../../../../_work", "obs.alerts.plagin", "obs.alerts.plagin")
 
-	errFiles := filepath.Walk("../../../../obs.alerts.plagin/obs.alerts.plagin/", func(path string, info os.FileInfo, err error) error {
+	ff, errFF := filepath.Abs("../../../../obs.alerts.plagin/obs.alerts.plagin/")
+	if errFF != nil {
+		log.Error().Msgf("Error getting absolute path: %s", errFF)
+		h.response(w, http.StatusInternalServerError, map[string]string{
+			"error": "Error getting absolute path",
+		})
+		return
+	}
+
+	errFiles := filepath.Walk(ff, func(path string, info os.FileInfo, err error) error {
 		if err != nil {
 			log.Error().Msgf("1: %s", err)
 			return err
