@@ -60,6 +60,9 @@ func (h *Handlers) GeneratePlugin(w http.ResponseWriter, r *http.Request) {
 			return err
 		}
 
+		// Выводим размер файла или директории
+		fmt.Printf("%s %d байт\n", relativePath, info.Size())
+
 		// Создаем файл в архиве
 		zipFile, err := zipWriter.Create(relativePath)
 		if err != nil {
