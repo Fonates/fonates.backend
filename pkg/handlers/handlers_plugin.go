@@ -46,24 +46,9 @@ func (h *Handlers) GeneratePlugin(w http.ResponseWriter, r *http.Request) {
 	buf := new(bytes.Buffer)
 	zipWriter := zip.NewWriter(buf)
 
-	workDir, err := os.Getwd()
-	if err != nil {
-		log.Error().Msgf("Error getting work dir: %s", err)
-		h.response(w, http.StatusInternalServerError, map[string]string{
-			"error": "Error getting work dir",
-		})
-		return
-	}
-
-	// Относительный путь к директории плагина
 	relativePluginDir := filepath.Join("_work", "obs.alerts.plagin", "obs.alerts.plagin")
 
-	// Получаем абсолютный путь к директории плагина
-	absPluginDir := filepath.Join(workDir, relativePluginDir)
-
-	log.Info().Msgf("Plugin dir: %s", absPluginDir)
-
-	errFiles := filepath.Walk(absPluginDir, func(path string, info os.FileInfo, err error) error {
+	errFiles := filepath.Walk(relativePluginDir, func(path string, info os.FileInfo, err error) error {
 		if err != nil {
 			return err
 		}
