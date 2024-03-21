@@ -54,6 +54,13 @@ func (h *Handlers) GeneratePlugin(w http.ResponseWriter, r *http.Request) {
 			return err
 		}
 
+		excludeFiles := []string{"main.js", ".DS_Store", ".git", ".github"} // Добавьте другие файлы, которые нужно пропустить
+		for _, excluded := range excludeFiles {
+			if info.Name() == excluded {
+				return nil
+			}
+		}
+
 		// Получаем относительный путь файла внутри директории
 		relativePath, err := filepath.Rel(absObsAlertsPlaginDir, path)
 		if err != nil {
