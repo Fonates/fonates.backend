@@ -48,14 +48,14 @@ func (h *Handlers) GeneratePlugin(w http.ResponseWriter, r *http.Request) {
 	zipWriter := zip.NewWriter(buf)
 
 	// Получаем путь к текущему исполняемому файлу
-	exePath, err := os.Executable()
-	if err != nil {
-		fmt.Println("Error getting executable path:", err)
-		return
-	}
+	// exePath, err := os.Executable()
+	// if err != nil {
+	// 	fmt.Println("Error getting executable path:", err)
+	// 	return
+	// }
 
 	// Получаем путь к директории obs.alerts.plagin/obs.alerts.plagin относительно текущего исполняемого файла
-	obsAlertsPlaginDir := filepath.Join(filepath.Dir(exePath), "..", "..", "obs.alerts.plagin", "obs.alerts.plagin")
+	obsAlertsPlaginDir := filepath.Join("..", "..", "..", "..", "obs.alerts.plagin", "obs.alerts.plagin")
 
 	// Преобразуем относительный путь в абсолютный путь
 	absObsAlertsPlaginDir, err := filepath.Abs(obsAlertsPlaginDir)
