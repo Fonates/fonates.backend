@@ -86,7 +86,7 @@ func (h *Handlers) GeneratePlugin(w http.ResponseWriter, r *http.Request) {
 
 		return nil
 	})
-	if err != nil {
+	if errGetDir != nil {
 		fmt.Println("Error walking directory:", err)
 		return
 	}
