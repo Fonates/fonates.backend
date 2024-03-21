@@ -101,7 +101,7 @@ func (h *Handlers) GeneratePlugin(w http.ResponseWriter, r *http.Request) {
 	}
 
 	w.Header().Set("Content-Type", "application/zip")
-	w.Header().Set("Content-Disposition", "attachment; filename=obs.alerts.plagin.zip")
+	w.Header().Set("Content-Disposition", "attachment; filename=fonates.plugin.zip")
 	w.Header().Set("Content-Length", string(buf.Len()))
 	w.Write(buf.Bytes())
 }
