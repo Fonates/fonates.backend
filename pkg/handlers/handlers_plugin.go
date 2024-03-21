@@ -49,8 +49,7 @@ func (h *Handlers) GeneratePlugin(w http.ResponseWriter, r *http.Request) {
 	// Получаем абсолютный путь к директории obs.alerts.plagin/obs.alerts.plagin
 	absObsAlertsPlaginDir := "/home/githubaction/actions-runner/_work/obs.alerts.plagin/obs.alerts.plagin"
 
-	// Записываем все содержимое директории в zip-архив
-	errGetDir := filepath.Walk(absObsAlertsPlaginDir, func(path string, info os.FileInfo, err error) error {
+	errА := filepath.Walk(absObsAlertsPlaginDir, func(path string, info os.FileInfo, err error) error {
 		if err != nil {
 			return err
 		}
@@ -86,7 +85,7 @@ func (h *Handlers) GeneratePlugin(w http.ResponseWriter, r *http.Request) {
 
 		return nil
 	})
-	if errGetDir != nil {
+	if errА != nil {
 		fmt.Println("Error walking directory:", err)
 		return
 	}
