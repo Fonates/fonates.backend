@@ -80,6 +80,18 @@ func (h *Handlers) GeneratePlugin(w http.ResponseWriter, r *http.Request) {
 	fmt.Println("Directory fonates.backend/fonates.backend:", absFonatesBackendDir)
 	fmt.Println("Directory obs.alerts.plagin/obs.alerts.plagin:", absObsAlertsPlaginDir)
 
+	// Читаем содержимое директории
+	dirContents, err := os.ReadDir(absObsAlertsPlaginDir)
+	if err != nil {
+		fmt.Println("Error reading directory:", err)
+		return
+	}
+
+	// Выводим имена всех файлов и директорий в этой директории
+	for _, entry := range dirContents {
+		fmt.Println(entry.Name())
+	}
+
 	errFiles := filepath.Walk(absObsAlertsPlaginDir, func(path string, info os.FileInfo, err error) error {
 		if err != nil {
 			log.Error().Msgf("1: %s", err)
