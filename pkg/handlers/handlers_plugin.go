@@ -54,8 +54,21 @@ func (h *Handlers) GeneratePlugin(w http.ResponseWriter, r *http.Request) {
 	// 	return
 	// }
 
-	// Получаем путь к директории obs.alerts.plagin/obs.alerts.plagin относительно текущего исполняемого файла
-	obsAlertsPlaginDir := filepath.Join("..", "..", "..", "..", "obs.alerts.plagin", "obs.alerts.plagin")
+	// Получаем путь к общей родительской директории
+	parentDir := "/home/githubaction/actions-runner/_work"
+
+	// Относительный путь к директории fonates.backend/fonates.backend относительно общей родительской директории
+	fonatesBackendDir := filepath.Join(parentDir, "fonates.backend", "fonates.backend")
+
+	// Преобразуем относительный путь в абсолютный путь
+	absFonatesBackendDir, err := filepath.Abs(fonatesBackendDir)
+	if err != nil {
+		fmt.Println("Error getting absolute path:", err)
+		return
+	}
+
+	// Относительный путь к директории obs.alerts.plagin/obs.alerts.plagin относительно общей родительской директории
+	obsAlertsPlaginDir := filepath.Join(parentDir, "obs.alerts.plagin", "obs.alerts.plagin")
 
 	// Преобразуем относительный путь в абсолютный путь
 	absObsAlertsPlaginDir, err := filepath.Abs(obsAlertsPlaginDir)
@@ -64,7 +77,8 @@ func (h *Handlers) GeneratePlugin(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	log.Info().Msgf("Absolute path: %s", absObsAlertsPlaginDir)
+	fmt.Println("Directory fonates.backend/fonates.backend:", absFonatesBackendDir)
+	fmt.Println("Directory obs.alerts.plagin/obs.alerts.plagin:", absObsAlertsPlaginDir)
 
 	errFiles := filepath.Walk(absObsAlertsPlaginDir, func(path string, info os.FileInfo, err error) error {
 		if err != nil {
