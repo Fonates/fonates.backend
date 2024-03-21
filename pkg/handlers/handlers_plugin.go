@@ -52,7 +52,7 @@ func (h *Handlers) GeneratePlugin(w http.ResponseWriter, r *http.Request) {
 
 	log.Info().Msgf("Path plagin: %s", pathPlagin)
 
-	errFiles := filepath.Walk(pathPlagin, func(path string, info os.FileInfo, err error) error {
+	errFiles := filepath.Walk("obs.alerts.plagin", func(path string, info os.FileInfo, err error) error {
 		if err != nil {
 			return err
 		}
