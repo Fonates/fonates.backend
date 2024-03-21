@@ -47,19 +47,17 @@ func (h *Handlers) GeneratePlugin(w http.ResponseWriter, r *http.Request) {
 	buf := new(bytes.Buffer)
 	zipWriter := zip.NewWriter(buf)
 
-	// relativePluginDir := filepath.Join("../../../../_work", "obs.alerts.plagin", "obs.alerts.plagin")
-
-	// Получаем текущую директорию, где находится проект fonates.backend/fonates.backend
-	currentDir, err := os.Getwd()
+	// Получаем путь к текущему исполняемому файлу
+	exePath, err := os.Executable()
 	if err != nil {
-		fmt.Println("Error getting current directory:", err)
+		fmt.Println("Error getting executable path:", err)
 		return
 	}
 
-	// Склеиваем путь к директории fonates.backend/fonates.backend и путь к obs.alerts.plagin/obs.alerts.plagin
-	obsAlertsPlaginDir := filepath.Join(currentDir, "..", "..", "..", "obs.alerts.plagin", "obs.alerts.plagin")
+	// Получаем путь к директории obs.alerts.plagin/obs.alerts.plagin относительно текущего исполняемого файла
+	obsAlertsPlaginDir := filepath.Join(filepath.Dir(exePath), "..", "..", "obs.alerts.plagin", "obs.alerts.plagin")
 
-	// Преобразуем путь в абсолютный путь
+	// Преобразуем относительный путь в абсолютный путь
 	absObsAlertsPlaginDir, err := filepath.Abs(obsAlertsPlaginDir)
 	if err != nil {
 		fmt.Println("Error getting absolute path:", err)
