@@ -3,6 +3,7 @@ package handlers
 import (
 	"archive/zip"
 	"bytes"
+	"fmt"
 	"io"
 	"net/http"
 	"os"
@@ -48,16 +49,26 @@ func (h *Handlers) GeneratePlugin(w http.ResponseWriter, r *http.Request) {
 
 	// relativePluginDir := filepath.Join("../../../../_work", "obs.alerts.plagin", "obs.alerts.plagin")
 
-	ff, errFF := filepath.Abs("../../../../obs.alerts.plagin/obs.alerts.plagin/")
-	if errFF != nil {
-		log.Error().Msgf("Error getting absolute path: %s", errFF)
-		h.response(w, http.StatusInternalServerError, map[string]string{
-			"error": "Error getting absolute path",
-		})
+	// Получаем текущую директорию, где находится проект fonates.backend/fonates.backend
+	currentDir, err := os.Getwd()
+	if err != nil {
+		fmt.Println("Error getting current directory:", err)
 		return
 	}
 
-	errFiles := filepath.Walk(ff, func(path string, info os.FileInfo, err error) error {
+	// Склеиваем путь к директории fonates.backend/fonates.backend и путь к obs.alerts.plagin/obs.alerts.plagin
+	obsAlertsPlaginDir := filepath.Join(currentDir, "..", "..", "..", "obs.alerts.plagin", "obs.alerts.plagin")
+
+	// Преобразуем путь в абсолютный путь
+	absObsAlertsPlaginDir, err := filepath.Abs(obsAlertsPlaginDir)
+	if err != nil {
+		fmt.Println("Error getting absolute path:", err)
+		return
+	}
+
+	log.Info().Msgf("Absolute path: %s", absObsAlertsPlaginDir)
+
+	errFiles := filepath.Walk(absObsAlertsPlaginDir, func(path string, info os.FileInfo, err error) error {
 		if err != nil {
 			log.Error().Msgf("1: %s", err)
 			return err
