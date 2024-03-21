@@ -60,18 +60,19 @@ func (h *Handlers) GeneratePlugin(w http.ResponseWriter, r *http.Request) {
 			return err
 		}
 
-		// Выводим размер файла или директории
-		fmt.Printf("%s %d байт\n", relativePath, info.Size())
+		// Создаем запись для каждой директории в архиве
+		if info.IsDir() {
+			_, err := zipWriter.Create(relativePath + "/") // Добавляем "/" в конец, чтобы обозначить директорию
+			if err != nil {
+				return err
+			}
+			return nil
+		}
 
 		// Создаем файл в архиве
 		zipFile, err := zipWriter.Create(relativePath)
 		if err != nil {
 			return err
-		}
-
-		// Если это директория, то ничего не делаем
-		if info.IsDir() {
-			return nil
 		}
 
 		// Если это файл, то копируем его содержимое в архив
