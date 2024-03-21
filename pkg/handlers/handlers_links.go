@@ -79,7 +79,6 @@ func (h *Handlers) GetLinkByAddress(w http.ResponseWriter, r *http.Request) {
 func (h *Handlers) ActivateLink(w http.ResponseWriter, r *http.Request) {
 	vars := mux.Vars(r)
 	address := vars["address"]
-	w.Header().Set("Access-Control-Allow-Origin", "*")
 
 	if address == "" {
 		h.response(w, http.StatusBadRequest, map[string]string{
