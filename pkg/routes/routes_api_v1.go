@@ -1,8 +1,6 @@
 package routes
 
 import (
-	"net/http"
-
 	"github.com/gorilla/mux"
 )
 
@@ -16,9 +14,9 @@ func (r *router) initV1Routes() *mux.Router {
 func (r *router) initLinksRoutes() *mux.Router {
 	linksRoutes := r.Router.PathPrefix("/links").Subrouter()
 	{
-		linksRoutes.HandleFunc("/create", r.Handlers.CreateLinkHandler).Methods("POST")
-		linksRoutes.HandleFunc("/{address}", func(w http.ResponseWriter, r *http.Request) {}).Methods("GET")
-		linksRoutes.HandleFunc("/{address}/activate", func(w http.ResponseWriter, r *http.Request) {}).Methods("UPDATE")
+		linksRoutes.HandleFunc("/create", r.Handlers.CreateLink).Methods("POST")
+		linksRoutes.HandleFunc("/{address}", r.Handlers.GetLinkByAddress).Methods("GET")
+		linksRoutes.HandleFunc("/{address}/activate", r.Handlers.ActivateLink).Methods("PUT")
 	}
 
 	return r.Router

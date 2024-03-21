@@ -31,3 +31,11 @@ func (d DonationLink) Validate() bool {
 func (d DonationLink) Create(store *gorm.DB) (DonationLink, error) {
 	return d, store.Create(&d).Error
 }
+
+func (d DonationLink) GetByAddress(store *gorm.DB, address string) (DonationLink, error) {
+	return d, store.Where("address = ?", address).First(&d).Error
+}
+
+func (d DonationLink) Activate(store *gorm.DB) error {
+	return store.Model(&d).Update("status", "ACTIVE").Error
+}

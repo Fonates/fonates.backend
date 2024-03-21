@@ -24,3 +24,11 @@ func InitKeysActivation(linkId uint) KeysActivationLink {
 func (k KeysActivationLink) Create(store *gorm.DB) error {
 	return store.Create(&k).Error
 }
+
+func (k KeysActivationLink) Activate(store *gorm.DB) error {
+	return store.Model(&k).Update("status", "ACTIVE").Error
+}
+
+func (k KeysActivationLink) GetByLinkID(store *gorm.DB, linkId uint) (KeysActivationLink, error) {
+	return k, store.Where("donation_link_id = ?", linkId).First(&k).Error
+}
