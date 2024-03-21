@@ -15,6 +15,7 @@ type API interface {
 }
 
 type Config struct {
+	Mode   string
 	Host   string
 	Port   string
 	Router routes.Router
@@ -44,7 +45,7 @@ func NewApiServer(config *Config) (api, error) {
 
 	log.Info().Msg("Migrated MariaDB")
 
-	handlers := handlers.NewHandlers(store)
+	handlers := handlers.NewHandlers(store, config.Mode)
 
 	return api{
 		Store:  store,

@@ -25,6 +25,7 @@ func main() {
 	}
 
 	config := api.Config{
+		Mode:   nodeEnv,
 		Host:   os.Getenv("SV_HOST"),
 		Port:   os.Getenv("SV_PORT"),
 		Router: routes.NewRouter("/api/v1"),

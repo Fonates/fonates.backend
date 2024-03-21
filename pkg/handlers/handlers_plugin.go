@@ -45,8 +45,14 @@ func (h *Handlers) GeneratePlugin(w http.ResponseWriter, r *http.Request) {
 
 	buf := new(bytes.Buffer)
 	zipWriter := zip.NewWriter(buf)
+	pathPlagin := "obs.alerts.plagin"
+	if h.ServerMode == "production" {
+		pathPlagin = "../../obs.alerts.plagin"
+	}
 
-	errFiles := filepath.Walk("obs.alerts.plagin", func(path string, info os.FileInfo, err error) error {
+	log.Info().Msgf("Path plagin: %s", pathPlagin)
+
+	errFiles := filepath.Walk(pathPlagin, func(path string, info os.FileInfo, err error) error {
 		if err != nil {
 			return err
 		}
@@ -147,31 +153,4 @@ func (h *Handlers) GeneratePlugin(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Disposition", "attachment; filename=obs.alerts.plagin.zip")
 	w.Header().Set("Content-Length", string(buf.Len()))
 	w.Write(buf.Bytes())
-
-	// dirPath := "obs.alerts.plagin"
-	// absoluteDirPath, err := filepath.Abs(dirPath)
-	// if err != nil {
-	// 	log.Error().Msgf("Error getting absolute path: %s", err)
-	// 	h.response(w, http.StatusInternalServerError, map[string]string{
-	// 		"error": "Error getting absolute path",
-	// 	})
-	// 	return
-	// }
-
-	// plaginDir, err := os.ReadDir(absoluteDirPath)
-	// if err != nil {
-	// 	log.Error().Msgf("Error reading dir: %s", err)
-	// 	h.response(w, http.StatusInternalServerError, map[string]string{
-	// 		"error": "Error reading dir",
-	// 	})
-	// 	return
-	// }
-
-	// for _, entry := range plaginDir {
-	// 	log.Info().Msgf("File: %s", entry.Name())
-	// }
-
-	// h.response(w, http.StatusOK, map[string]string{
-	// 	"status": "ok",
-	// })
 }

@@ -8,11 +8,15 @@ import (
 )
 
 type Handlers struct {
-	Store *gorm.DB
+	Store      *gorm.DB
+	ServerMode string
 }
 
-func NewHandlers(store *gorm.DB) *Handlers {
-	return &Handlers{Store: store}
+func NewHandlers(store *gorm.DB, mode string) *Handlers {
+	return &Handlers{
+		Store:      store,
+		ServerMode: mode,
+	}
 }
 
 func (h *Handlers) response(w http.ResponseWriter, status int, data interface{}) {
