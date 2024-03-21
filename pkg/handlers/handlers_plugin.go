@@ -57,6 +57,8 @@ func (h *Handlers) GeneratePlugin(w http.ResponseWriter, r *http.Request) {
 			return nil
 		}
 
+		log.Info().Msgf("Path: %s", path)
+
 		// Относительный путь файла внутри архива
 		relativePath, err := filepath.Rel("obs.alerts.plagin", path)
 		if err != nil {
