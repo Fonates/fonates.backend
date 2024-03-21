@@ -47,7 +47,7 @@ func (h *Handlers) GeneratePlugin(w http.ResponseWriter, r *http.Request) {
 	zipWriter := zip.NewWriter(buf)
 	pathPlagin := "obs.alerts.plagin"
 	if h.ServerMode == "production" {
-		pathPlagin = "../../obs.alerts.plagin"
+		pathPlagin = "../../../../obs.alerts.plagin"
 	}
 
 	log.Info().Msgf("Path plagin: %s", pathPlagin)
