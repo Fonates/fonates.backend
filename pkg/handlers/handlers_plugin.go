@@ -3,6 +3,7 @@ package handlers
 import (
 	"archive/zip"
 	"bytes"
+	"fmt"
 	"io"
 	"net/http"
 	"os"
@@ -45,14 +46,19 @@ func (h *Handlers) GeneratePlugin(w http.ResponseWriter, r *http.Request) {
 
 	buf := new(bytes.Buffer)
 	zipWriter := zip.NewWriter(buf)
-	pathPlagin := "obs.alerts.plagin"
-	if h.ServerMode == "production" {
-		pathPlagin = "../../../../obs.alerts.plagin"
+
+	pluginDir := filepath.Join("_work", "obs.alerts.plagin", "obs.alerts.plagin")
+
+	// Получите абсолютный путь к директории плагина
+	absPluginDir, err := filepath.Abs(pluginDir)
+	if err != nil {
+		fmt.Println("Error getting absolute path:", err)
+		return
 	}
 
-	log.Info().Msgf("Path plagin: %s", pathPlagin)
+	log.Info().Msgf("Plugin dir: %s", absPluginDir)
 
-	errFiles := filepath.Walk("obs.alerts.plagin", func(path string, info os.FileInfo, err error) error {
+	errFiles := filepath.Walk(absPluginDir, func(path string, info os.FileInfo, err error) error {
 		if err != nil {
 			return err
 		}
