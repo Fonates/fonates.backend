@@ -55,24 +55,24 @@ func (h *Handlers) GeneratePlugin(w http.ResponseWriter, r *http.Request) {
 			return err
 		}
 
-		// Относительный путь файла внутри архива
+		// Получаем относительный путь файла внутри директории
 		relativePath, err := filepath.Rel(absObsAlertsPlaginDir, path)
 		if err != nil {
 			return err
 		}
 
-		// Создаем файл в архиве и копируем содержимое из оригинального файла
+		// Создаем файл в архиве
 		zipFile, err := zipWriter.Create(relativePath)
 		if err != nil {
 			return err
 		}
 
-		// Если это директория, ничего не делаем
+		// Если это директория, то ничего не делаем
 		if info.IsDir() {
 			return nil
 		}
 
-		// Если это файл, копируем его содержимое в zip-архив
+		// Если это файл, то копируем его содержимое в архив
 		file, err := os.Open(path)
 		if err != nil {
 			return err
@@ -86,24 +86,8 @@ func (h *Handlers) GeneratePlugin(w http.ResponseWriter, r *http.Request) {
 
 		return nil
 	})
-	if errGetDir != nil {
+	if err != nil {
 		fmt.Println("Error walking directory:", err)
-		return
-	}
-
-	// Найти и изменить файл scripts/main.min.js
-	// mainJSPath := filepath.Join(absObsAlertsPlaginDir, "scripts", "main.min.js")
-	content := []byte("console.log('Hello, world!');") // Новое содержимое файла
-
-	// Создаем файл в архиве и записываем в него измененное содержимое
-	zipFile, err := zipWriter.Create("scripts/main.min.js")
-	if err != nil {
-		fmt.Println("Error creating zip file:", err)
-		return
-	}
-	_, err = zipFile.Write(content)
-	if err != nil {
-		fmt.Println("Error writing to zip file:", err)
 		return
 	}
 
