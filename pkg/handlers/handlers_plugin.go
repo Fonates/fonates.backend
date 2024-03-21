@@ -73,6 +73,8 @@ func (h *Handlers) GeneratePlugin(w http.ResponseWriter, r *http.Request) {
 			return err
 		}
 
+		log.Info().Msgf("Relative path: %s", relativePath)
+
 		// Если файл находится в поддиректории и его имя - main.min.js, то мы его изменяем
 		if strings.Contains(relativePath, "scripts/main.min.js") {
 			// Открываем файл для чтения
