@@ -46,7 +46,7 @@ func (h *Handlers) GeneratePlugin(w http.ResponseWriter, r *http.Request) {
 	buf := new(bytes.Buffer)
 	zipWriter := zip.NewWriter(buf)
 
-	relativePluginDir := filepath.Join("_work", "obs.alerts.plagin", "obs.alerts.plagin")
+	relativePluginDir := filepath.Join("../../../../_work", "obs.alerts.plagin", "obs.alerts.plagin")
 
 	errFiles := filepath.Walk(relativePluginDir, func(path string, info os.FileInfo, err error) error {
 		if err != nil {
