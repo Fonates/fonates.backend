@@ -40,12 +40,11 @@ func (h *Handlers) Middleware(next http.Handler) http.Handler {
 
 		// Добавляем заголовки CORS
 		w.Header().Set("Access-Control-Allow-Origin", "*")
-		w.Header().Set("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, OPTIONS")
-		w.Header().Set("Access-Control-Allow-Headers", "Content-Type, X-Link-Activation-Key")
 
 		// Пропускаем опцион запросы
 		if r.Method == "OPTIONS" {
-			return
+			w.Header().Set("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, OPTIONS")
+			w.Header().Set("Access-Control-Allow-Headers", "Content-Type, X-Link-Activation-Key")
 		}
 
 		next.ServeHTTP(w, r)
