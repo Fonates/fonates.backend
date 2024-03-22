@@ -5,6 +5,8 @@ import (
 )
 
 func (r *router) initV1Routes() *mux.Router {
+	r.Router.Use(r.Handlers.Middleware)
+
 	r.initLinksRoutes()
 	r.initPluginRoutes()
 
