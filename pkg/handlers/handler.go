@@ -23,13 +23,10 @@ func NewHandlers(store *gorm.DB, mode string) *Handlers {
 func (h *Handlers) response(w http.ResponseWriter, status int, data interface{}) {
 	jsonData, err := json.Marshal(data)
 	if err != nil {
-		w.Header().Set("Access-Control-Allow-Origin", "*")
 		http.Error(w, "Error marshalling response", http.StatusInternalServerError)
 		return
 	}
 
-	w.Header().Set("Access-Control-Allow-Origin", "*")
-	w.Header().Set("Content-Type", "application/json")
 	w.WriteHeader(status)
 	w.Write(jsonData)
 }
@@ -38,10 +35,8 @@ func (h *Handlers) Middleware(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		log.Printf("%s - %s (%s)", r.Method, r.URL.Path, r.RemoteAddr)
 
-		// Добавляем заголовки CORS
 		w.Header().Set("Access-Control-Allow-Origin", "*")
 
-		// Пропускаем опцион запросы
 		if r.Method == "OPTIONS" {
 			w.Header().Set("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, OPTIONS")
 			w.Header().Set("Access-Control-Allow-Headers", "Content-Type, X-Link-Activation-Key")
