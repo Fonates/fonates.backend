@@ -18,7 +18,7 @@ func (r *router) initLinksRoutes() *mux.Router {
 	{
 		linksRoutes.HandleFunc("/create", r.Handlers.CreateLink).Methods("POST")
 		linksRoutes.HandleFunc("/{address}", r.Handlers.GetLinkByAddress).Methods("GET")
-		linksRoutes.HandleFunc("/{address}/activate", r.Handlers.ActivateLink).Methods("GET")
+		linksRoutes.HandleFunc("/{address}/activate", r.Handlers.ActivateLink).Methods("GET", "OPTIONS")
 	}
 
 	return r.Router
