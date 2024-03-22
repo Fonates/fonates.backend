@@ -26,7 +26,6 @@ func (h *Handlers) response(w http.ResponseWriter, status int, data interface{})
 		return
 	}
 
-	w.Header().Set("Access-Control-Allow-Origin", "*")
 	w.Header().Set("Content-Type", "application/json")
 	w.WriteHeader(status)
 	w.Write(jsonData)
