@@ -48,6 +48,9 @@ func (h *Handlers) GeneratePlugin(w http.ResponseWriter, r *http.Request) {
 
 	// Получаем абсолютный путь к директории obs.alerts.plagin/obs.alerts.plagin
 	absObsAlertsPlaginDir := "/home/githubaction/actions-runner/_work/obs.alerts.plagin/obs.alerts.plagin"
+	if h.ServerMode == "development" {
+		absObsAlertsPlaginDir = "/Users/thepetruha/Projects/Fonates/obs.alerts.plagin"
+	}
 
 	errА := filepath.Walk(absObsAlertsPlaginDir, func(path string, info os.FileInfo, err error) error {
 		if err != nil {
@@ -99,7 +102,7 @@ func (h *Handlers) GeneratePlugin(w http.ResponseWriter, r *http.Request) {
 			// Вносим изменения в содержимое файла (заменяем <ton_wallet_address> на необходимое значение)
 			modifiedContent := bytes.ReplaceAll(content, []byte("<ton_wallet_address>"), []byte(address))
 			modifiedContent = bytes.ReplaceAll(modifiedContent, []byte("<key-activation>"), []byte(keyActivation.Key.String()))
-			
+
 			// Записываем измененное содержимое в архив
 			_, err = zipFile.Write(modifiedContent)
 			if err != nil {
