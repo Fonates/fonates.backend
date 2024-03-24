@@ -127,6 +127,7 @@ func (h *Handlers) ActivateLink(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	log.Println(key.Key.String(), keyActivation)
 	if key.Key.String() != keyActivation {
 		log.Println("Invalid key")
 		h.response(w, http.StatusForbidden, map[string]string{
