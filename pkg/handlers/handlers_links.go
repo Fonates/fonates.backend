@@ -110,17 +110,17 @@ func (h *Handlers) ActivateLink(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	log.Default().Println(link)
 	key, err := models.InitKeysActivation(link.ID).GetByLinkID(h.Store, link.ID)
 	if err != nil {
+		log.Println(err.Error())
 		h.response(w, http.StatusNotFound, map[string]string{
 			"error": "Key not found",
 		})
 		return
 	}
-	log.Default().Println(key.Key.String())
 
 	if key.Status == "ACTIVE" {
+		log.Println("Link already activated")
 		h.response(w, http.StatusOK, map[string]string{
 			"status": "ok",
 		})
@@ -128,6 +128,7 @@ func (h *Handlers) ActivateLink(w http.ResponseWriter, r *http.Request) {
 	}
 
 	if key.Key.String() != keyActivation {
+		log.Println("Invalid key")
 		h.response(w, http.StatusForbidden, map[string]string{
 			"error": "Invalid key",
 		})
@@ -135,6 +136,7 @@ func (h *Handlers) ActivateLink(w http.ResponseWriter, r *http.Request) {
 	}
 
 	if err := link.Activate(h.Store); err != nil {
+		log.Println(err.Error())
 		h.response(w, http.StatusInternalServerError, map[string]string{
 			"error": "Error activating link",
 		})
@@ -142,6 +144,7 @@ func (h *Handlers) ActivateLink(w http.ResponseWriter, r *http.Request) {
 	}
 
 	if err := key.Activate(h.Store); err != nil {
+		log.Println(err.Error())
 		h.response(w, http.StatusInternalServerError, map[string]string{
 			"error": "Error activating key",
 		})
