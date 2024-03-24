@@ -32,6 +32,12 @@ func (h *Handlers) CreateLink(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	foundLink, errFoundLink := postBody.GetByAddress(h.Store, postBody.Address)
+	if foundLink != nil && errFoundLink == nil {
+		h.response(w, http.StatusOK, foundLink)
+		return
+	}
+
 	postBody.Status = "INACTIVE"
 	crearedLink, err := postBody.Create(h.Store)
 	if err != nil {
@@ -59,7 +65,7 @@ func (h *Handlers) GetLinkByAddress(w http.ResponseWriter, r *http.Request) {
 	address := vars["address"]
 
 	link, err := models.InitDonationLink().GetByAddress(h.Store, address)
-	if err != nil {
+	if err != nil || link == nil {
 		h.response(w, http.StatusNotFound, map[string]string{
 			"error": "Link not found",
 		})
@@ -96,7 +102,7 @@ func (h *Handlers) ActivateLink(w http.ResponseWriter, r *http.Request) {
 	}
 
 	link, err := models.InitDonationLink().GetByAddress(h.Store, address)
-	if err != nil {
+	if err != nil || link == nil {
 		h.response(w, http.StatusNotFound, map[string]string{
 			"error": "Link not found",
 		})

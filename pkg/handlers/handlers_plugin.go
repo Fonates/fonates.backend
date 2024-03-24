@@ -26,7 +26,7 @@ func (h *Handlers) GeneratePlugin(w http.ResponseWriter, r *http.Request) {
 	}
 
 	link, err := models.InitDonationLink().GetByAddress(h.Store, address)
-	if err != nil {
+	if err != nil || link == nil {
 		h.response(w, http.StatusInternalServerError, map[string]string{
 			"error": "Error getting link",
 		})

@@ -39,7 +39,7 @@ func (h *Handlers) Middleware(next http.Handler) http.Handler {
 
 		if r.Method == "OPTIONS" {
 			w.Header().Set("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, OPTIONS")
-			w.Header().Set("Access-Control-Allow-Headers", "Content-Type, X-Link-Activation-Key")
+			w.Header().Set("Access-Control-Allow-Headers", "Content-Type, X-Link-Activation-Key, Access-Control-Allow-Origin")
 			w.WriteHeader(http.StatusOK)
 			return
 		}

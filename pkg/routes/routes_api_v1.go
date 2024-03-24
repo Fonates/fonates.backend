@@ -16,8 +16,8 @@ func (r *router) initV1Routes() *mux.Router {
 func (r *router) initLinksRoutes() *mux.Router {
 	linksRoutes := r.Router.PathPrefix("/links").Subrouter()
 	{
-		linksRoutes.HandleFunc("/create", r.Handlers.CreateLink).Methods("POST")
-		linksRoutes.HandleFunc("/{address}", r.Handlers.GetLinkByAddress).Methods("GET")
+		linksRoutes.HandleFunc("/create", r.Handlers.CreateLink).Methods("POST", "OPTIONS")
+		linksRoutes.HandleFunc("/{address}", r.Handlers.GetLinkByAddress).Methods("GET", "OPTIONS")
 		linksRoutes.HandleFunc("/{address}/activate", r.Handlers.ActivateLink).Methods("GET", "OPTIONS")
 	}
 
