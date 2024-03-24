@@ -3,6 +3,7 @@ package handlers
 import (
 	"encoding/json"
 	"io"
+	"log"
 	"net/http"
 
 	"fonates.backend/pkg/models"
@@ -109,6 +110,7 @@ func (h *Handlers) ActivateLink(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	log.Default().Println(keyActivation)
 	key, err := models.InitKeysActivation(link.ID).GetByLinkID(h.Store, link.ID)
 	if err != nil {
 		h.response(w, http.StatusNotFound, map[string]string{
@@ -116,6 +118,7 @@ func (h *Handlers) ActivateLink(w http.ResponseWriter, r *http.Request) {
 		})
 		return
 	}
+	log.Default().Println(key.Key.String())
 
 	if key.Status == "ACTIVE" {
 		h.response(w, http.StatusOK, map[string]string{
