@@ -110,7 +110,7 @@ func (h *Handlers) ActivateLink(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	log.Default().Println(keyActivation)
+	log.Default().Println(link)
 	key, err := models.InitKeysActivation(link.ID).GetByLinkID(h.Store, link.ID)
 	if err != nil {
 		h.response(w, http.StatusNotFound, map[string]string{
