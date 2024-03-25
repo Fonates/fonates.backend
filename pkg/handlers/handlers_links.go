@@ -3,7 +3,6 @@ package handlers
 import (
 	"encoding/json"
 	"io"
-	"log"
 	"net/http"
 
 	"fonates.backend/pkg/models"
@@ -112,24 +111,19 @@ func (h *Handlers) ActivateLink(w http.ResponseWriter, r *http.Request) {
 
 	key, err := models.InitKeysActivation(link.ID).GetByLinkID(h.Store, link.ID)
 	if err != nil {
-		log.Println(err.Error())
 		h.response(w, http.StatusNotFound, map[string]string{
 			"error": "Key not found",
 		})
 		return
 	}
-
 	if key.Status == "ACTIVE" {
-		log.Println("Link already activated")
 		h.response(w, http.StatusOK, map[string]string{
 			"status": "ok",
 		})
 		return
 	}
 
-	log.Println(key.Key.String(), keyActivation)
 	if key.Key.String() != keyActivation {
-		log.Println("Invalid key")
 		h.response(w, http.StatusForbidden, map[string]string{
 			"error": "Invalid key",
 		})
@@ -137,7 +131,6 @@ func (h *Handlers) ActivateLink(w http.ResponseWriter, r *http.Request) {
 	}
 
 	if err := link.Activate(h.Store); err != nil {
-		log.Println(err.Error())
 		h.response(w, http.StatusInternalServerError, map[string]string{
 			"error": "Error activating link",
 		})
@@ -145,7 +138,6 @@ func (h *Handlers) ActivateLink(w http.ResponseWriter, r *http.Request) {
 	}
 
 	if err := key.Activate(h.Store); err != nil {
-		log.Println(err.Error())
 		h.response(w, http.StatusInternalServerError, map[string]string{
 			"error": "Error activating key",
 		})
