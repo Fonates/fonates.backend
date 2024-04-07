@@ -10,14 +10,15 @@ func SetHeaders(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		log.Printf("%s - %s (%s)", r.Method, r.URL.Path, r.RemoteAddr)
 
-		w.Header().Set("Access-Control-Allow-Origin", "http://localhost:3000, https://fonates.com")
-		w.Header().Set("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, OPTIONS")
-		w.Header().Set("Access-Control-Allow-Headers", "Content-Type, X-Link-Activation-Key, Access-Control-Allow-Origin, Accpet, Authorization")
+		// w.Header().Set("Access-Control-Allow-Origin", "http://localhost:3000, https://fonates.com")
+		w.Header().Set("Access-Control-Allow-Origin", "*")
 
-		// if r.Method == "OPTIONS" {
-		// 	w.WriteHeader(http.StatusOK)
-		// 	return
-		// }
+		if r.Method == "OPTIONS" {
+			w.Header().Set("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, OPTIONS")
+			w.Header().Set("Access-Control-Allow-Headers", "Content-Type, X-Link-Activation-Key, Access-Control-Allow-Origin, Accpet, Authorization")
+			w.WriteHeader(http.StatusOK)
+			return
+		}
 
 		next.ServeHTTP(w, r)
 	})
