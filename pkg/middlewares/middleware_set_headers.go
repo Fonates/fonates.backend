@@ -3,14 +3,12 @@ package middlewares
 import (
 	"log"
 	"net/http"
-	// "fonates.backend/pkg/utils"
 )
 
 func SetHeaders(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		log.Printf("%s - %s (%s)", r.Method, r.URL.Path, r.RemoteAddr)
 
-		// w.Header().Set("Access-Control-Allow-Origin", "http://localhost:3000, https://fonates.com")
 		w.Header().Set("Access-Control-Allow-Origin", "*")
 
 		if r.Method == "OPTIONS" {
