@@ -32,12 +32,6 @@ func (h *Handlers) CreateLink(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	foundLink, errFoundLink := postBody.GetByAddress(h.Store, postBody.Address)
-	if foundLink != nil && errFoundLink == nil {
-		h.response(w, http.StatusOK, foundLink)
-		return
-	}
-
 	postBody.Status = "INACTIVE"
 	crearedLink, err := postBody.Create(h.Store)
 	if err != nil {
@@ -62,9 +56,9 @@ func (h *Handlers) CreateLink(w http.ResponseWriter, r *http.Request) {
 
 func (h *Handlers) GetLinkByAddress(w http.ResponseWriter, r *http.Request) {
 	vars := mux.Vars(r)
-	address := vars["address"]
+	linkId := vars["id"]
 
-	link, err := models.InitDonationLink().GetByAddress(h.Store, address)
+	link, err := models.InitDonationLink().GetById(h.Store, linkId)
 	if err != nil || link == nil {
 		h.response(w, http.StatusNotFound, map[string]string{
 			"error": "Link not found",
@@ -84,11 +78,11 @@ func (h *Handlers) GetLinkByAddress(w http.ResponseWriter, r *http.Request) {
 
 func (h *Handlers) ActivateLink(w http.ResponseWriter, r *http.Request) {
 	vars := mux.Vars(r)
-	address := vars["address"]
+	linkId := vars["id"]
 
-	if address == "" {
+	if linkId == "" {
 		h.response(w, http.StatusBadRequest, map[string]string{
-			"error": "Address not provided",
+			"error": "Id not provided",
 		})
 		return
 	}
@@ -101,7 +95,7 @@ func (h *Handlers) ActivateLink(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	link, err := models.InitDonationLink().GetByAddress(h.Store, address)
+	link, err := models.InitDonationLink().GetById(h.Store, linkId)
 	if err != nil || link == nil {
 		h.response(w, http.StatusNotFound, map[string]string{
 			"error": "Link not found",
@@ -109,7 +103,7 @@ func (h *Handlers) ActivateLink(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	key, err := models.InitKeysActivation(link.ID).GetByLinkID(h.Store, link.ID)
+	key, err := models.InitKeysActivation(link.ID).GetByLinkID(h.Store)
 	if err != nil {
 		h.response(w, http.StatusNotFound, map[string]string{
 			"error": "Key not found",

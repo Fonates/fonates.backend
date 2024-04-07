@@ -59,6 +59,7 @@ func NewApiServer(config *Config) (api, error) {
 
 func (s api) Start() error {
 	log.Info().Msg("Starting API server")
+	log.Info().Msg("Port: " + s.Server.Addr)
 	if err := s.Server.ListenAndServe(); err != nil {
 		return err
 	}

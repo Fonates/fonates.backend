@@ -42,6 +42,7 @@ func (m *MariaDB) Connect() (*gorm.DB, error) {
 
 func (m *MariaDB) Migration(db *gorm.DB) error {
 	return db.AutoMigrate(
+		models.User{},
 		models.DonationLink{},
 		models.KeysActivationLink{},
 	)

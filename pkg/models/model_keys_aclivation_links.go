@@ -6,11 +6,11 @@ import (
 )
 
 type KeysActivationLink struct {
-	Id             uint      `json:"id" gorm:"primaryKey, autoIncrement, not null"`
-	Key            uuid.UUID `json:"key" gorm:"type:uuid"`
-	Status         string    `json:"status" gorm:"not null"`
-	DonationLinkID uint      `json:"donation_link_id" gorm:"not null"`
-	DonationLink   DonationLink
+	ID             uint         `json:"id" gorm:"primaryKey, autoIncrement, not null"`
+	Key            uuid.UUID    `json:"key" gorm:"type:uuid"`
+	Status         string       `json:"status" gorm:"not null"`
+	DonationLinkID uint         `json:"donationLinkId" gorm:"not null"`
+	DonationLink   DonationLink `json:"-"`
 }
 
 func InitKeysActivation(linkId uint) KeysActivationLink {
@@ -29,6 +29,6 @@ func (k KeysActivationLink) Activate(store *gorm.DB) error {
 	return store.Model(&k).Update("status", "ACTIVE").Error
 }
 
-func (k KeysActivationLink) GetByLinkID(store *gorm.DB, linkId uint) (KeysActivationLink, error) {
-	return k, store.Where("donation_link_id = ?", linkId).First(&k).Error
+func (k KeysActivationLink) GetByLinkID(store *gorm.DB) (KeysActivationLink, error) {
+	return k, store.Where("donation_link_id = ?", k.DonationLinkID).First(&k).Error
 }

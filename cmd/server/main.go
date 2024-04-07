@@ -24,7 +24,7 @@ func main() {
 		panic(err)
 	}
 
-	config := api.Config{
+	configApiV2 := api.Config{
 		Mode:   nodeEnv,
 		Host:   os.Getenv("SV_HOST"),
 		Port:   os.Getenv("SV_PORT"),
@@ -38,7 +38,15 @@ func main() {
 		},
 	}
 
-	apiV1, errInit := api.NewApiServer(&config)
+	// if errLoad := configs.LoadConfig(); errLoad != nil {
+	// 	panic(errLoad)
+	// }
+
+	// if err := env.Parse(configApiV2); err != nil {
+	// 	panic(err)
+	// }
+
+	apiV1, errInit := api.NewApiServer(&configApiV2)
 	if errInit != nil {
 		panic(errInit)
 	}
