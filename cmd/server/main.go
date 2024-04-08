@@ -38,14 +38,6 @@ func main() {
 		},
 	}
 
-	// if errLoad := configs.LoadConfig(); errLoad != nil {
-	// 	panic(errLoad)
-	// }
-
-	// if err := env.Parse(configApiV2); err != nil {
-	// 	panic(err)
-	// }
-
 	apiV1, errInit := api.NewApiServer(&configApiV2)
 	if errInit != nil {
 		panic(errInit)

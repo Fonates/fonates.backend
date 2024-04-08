@@ -2,6 +2,7 @@ package routes
 
 import (
 	"fonates.backend/pkg/handlers"
+	"fonates.backend/pkg/middlewares"
 	"github.com/gorilla/mux"
 )
 
@@ -10,9 +11,10 @@ type Router interface {
 }
 
 type router struct {
-	Prefix   string
-	Router   *mux.Router
-	Handlers *handlers.Handlers
+	Prefix     string
+	Router     *mux.Router
+	Handlers   *handlers.Handlers
+	Middleware *middlewares.Middleware
 }
 
 func NewRouter(prefix string) Router {
@@ -20,11 +22,13 @@ func NewRouter(prefix string) Router {
 		Prefix:   prefix,
 		Router:   mux.NewRouter().PathPrefix(prefix).Subrouter(),
 		Handlers: nil,
+		Middleware: nil,
 	}
 }
 
 func (r *router) InitRoutes(handlers handlers.Handlers) *mux.Router {
 	r.Handlers = &handlers
+	r.Middleware = middlewares.NewMiddleware()
 
 	switch r.Prefix {
 	case "/api/v1":

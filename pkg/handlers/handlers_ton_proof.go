@@ -4,31 +4,14 @@ import (
 	"encoding/json"
 	"fmt"
 	"io"
+	"log"
 	"net/http"
-	"time"
 
+	"fonates.backend/pkg/models"
 	"fonates.backend/pkg/ton"
-	"github.com/golang-jwt/jwt"
+	"fonates.backend/pkg/utils"
 	"github.com/tonkeeper/tongo"
 )
-
-type jwtCustomClaims struct {
-	Address string `json:"address"`
-	jwt.StandardClaims
-}
-
-// type handler struct {
-// sharedSecret string
-// payloadTtl   time.Duration
-// }
-
-// func newHandler(sharedSecret string, payloadTtl time.Duration) *handler {
-// 	h := handler{
-// 		sharedSecret: sharedSecret,
-// 		payloadTtl:   payloadTtl,
-// 	}
-// 	return &h
-// }
 
 func (h *Handlers) ProofHandler(w http.ResponseWriter, r *http.Request) {
 	body, err := io.ReadAll(r.Body)
@@ -46,8 +29,6 @@ func (h *Handlers) ProofHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	fmt.Println(tp.Proof.Payload)
-	fmt.Println(h.SharedSecret)
 	err = ton.CheckPayload(tp.Proof.Payload, h.SharedSecret)
 	if err != nil {
 		h.response(w, http.StatusBadRequest, map[string]string{
@@ -71,6 +52,7 @@ func (h *Handlers) ProofHandler(w http.ResponseWriter, r *http.Request) {
 		})
 		return
 	}
+
 	addr, err := tongo.ParseAccountID(tp.Address)
 	if err != nil {
 		h.response(w, http.StatusBadRequest, map[string]string{
@@ -87,6 +69,7 @@ func (h *Handlers) ProofHandler(w http.ResponseWriter, r *http.Request) {
 		})
 		return
 	}
+
 	if !check {
 		h.response(w, http.StatusBadRequest, map[string]string{
 			"error": "proof verification failed",
@@ -94,16 +77,35 @@ func (h *Handlers) ProofHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	claims := &jwtCustomClaims{
-		tp.Address,
-		jwt.StandardClaims{
-			ExpiresAt: time.Now().AddDate(10, 0, 0).Unix(),
-		},
+	addrHuman, errConvert := ton.AddrFriendly(tp.Address, tp.Network)
+	if errConvert != nil {
+		log.Println("Error converting address: ", errConvert)
+		h.response(w, http.StatusInternalServerError, map[string]string{
+			"error": "Error converting address",
+		})
+		return
 	}
 
-	token := jwt.NewWithClaims(jwt.SigningMethodHS256, claims)
+	user := models.InitUser()
+	foundUser, errFound := user.GetByAddress(h.Store, addrHuman)
+	if errFound != nil {
+		h.response(w, http.StatusInternalServerError, map[string]string{
+			"error": "Error getting user",
+		})
+		return
+	}
 
-	t, err := token.SignedString([]byte(h.SharedSecret))
+	if foundUser.ID == 0 {
+		user.Address = addrHuman
+		if _, err := user.Create(h.Store); err != nil {
+			h.response(w, http.StatusInternalServerError, map[string]string{
+				"error": "Error creating user",
+			})
+			return
+		}
+	}
+
+	jwtToken, err := utils.InitJWTGen(h.SharedSecret).CreateToken(tp.Address)
 	if err != nil {
 		h.response(w, http.StatusInternalServerError, map[string]string{
 			"error": "Error signing token",
@@ -111,7 +113,7 @@ func (h *Handlers) ProofHandler(w http.ResponseWriter, r *http.Request) {
 	}
 
 	h.response(w, http.StatusOK, map[string]interface{}{
-		"token": t,
+		"token": jwtToken,
 	})
 }
 

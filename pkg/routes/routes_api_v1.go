@@ -1,12 +1,11 @@
 package routes
 
 import (
-	"fonates.backend/pkg/middlewares"
 	"github.com/gorilla/mux"
 )
 
 func (r *router) initV1Routes() *mux.Router {
-	r.Router.Use(middlewares.SetHeaders)
+	r.Router.Use(r.Middleware.SetHeaders)
 
 	r.initLinksRoutes()
 	r.initPluginRoutes()
@@ -19,7 +18,7 @@ func (r *router) initV1Routes() *mux.Router {
 func (r *router) initLinksRoutes() *mux.Router {
 	linksRoutes := r.Router.PathPrefix("/links").Subrouter()
 	{
-		linksRoutes.HandleFunc("/create", middlewares.Auth(r.Handlers.CreateLink)).Methods("POST", "OPTIONS")
+		linksRoutes.HandleFunc("/create", r.Handlers.CreateLink).Methods("POST", "OPTIONS")
 		linksRoutes.HandleFunc("/{id}", r.Handlers.GetLinkByAddress).Methods("GET", "OPTIONS")
 		linksRoutes.HandleFunc("/{id}/activate", r.Handlers.ActivateLink).Methods("GET", "OPTIONS")
 	}
@@ -39,8 +38,7 @@ func (r *router) initPluginRoutes() *mux.Router {
 func (r *router) initUsersRoutes() *mux.Router {
 	usersRoutes := r.Router.PathPrefix("/users").Subrouter()
 	{
-		// usersRoutes.HandleFunc("/{address}/login", r.Handlers.Login).Methods("GET", "OPTIONS")
-		usersRoutes.HandleFunc("/{address}/create", r.Handlers.CreateUser).Methods("POST", "OPTIONS")
+		usersRoutes.HandleFunc("/{address}", r.Middleware.Auth(r.Handlers.GetUserByAddress)).Methods("GET", "OPTIONS")
 	}
 
 	return r.Router
