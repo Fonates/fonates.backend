@@ -8,7 +8,7 @@ func AddrFriendly(rawAddress string, net string) (string, error) {
 		return "", err
 	}
 	isTestnet := net == "-3"
-	return accountID.ToHuman(true, isTestnet), nil
+	return accountID.ToHuman(false, isTestnet), nil
 }
 
 func ValidateTonAddress(address string) bool {
