@@ -5,6 +5,11 @@ import (
 	"gorm.io/gorm"
 )
 
+const (
+	LINK_KEY_INACTIVE = "INACTIVE"
+	LINK_KEY_ACTIVE   = "ACTIVE"
+)
+
 type KeysActivationLink struct {
 	ID             uint         `json:"id" gorm:"primaryKey, autoIncrement, not null"`
 	Key            uuid.UUID    `json:"key" gorm:"type:uuid"`
@@ -15,7 +20,7 @@ type KeysActivationLink struct {
 
 func InitKeysActivation(linkId uint) KeysActivationLink {
 	return KeysActivationLink{
-		Status:         "INACTIVE",
+		Status:         LINK_KEY_INACTIVE,
 		Key:            uuid.New(),
 		DonationLinkID: linkId,
 	}

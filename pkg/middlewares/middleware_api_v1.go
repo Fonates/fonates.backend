@@ -1,6 +1,7 @@
 package middlewares
 
 import (
+	"context"
 	"log"
 	"net/http"
 	"strings"
@@ -35,13 +36,13 @@ func (m *Middleware) Auth(next http.HandlerFunc) http.HandlerFunc {
 		}
 
 		claims, err := utils.InitJWTGen(m.SharedSecret).VerifyToken(bearerToken[1])
-		if err != nil {
+		if err != nil || claims["userId"] == "" {
 			http.Error(w, "Unauthorized", http.StatusUnauthorized)
 			return
 		}
 
-		log.Printf("User %s authenticated", claims["address"])
-
-		next.ServeHTTP(w, r)
+		userIdStr := claims["userId"].(string)
+		ctx := context.WithValue(r.Context(), "userId", userIdStr)
+		next.ServeHTTP(w, r.WithContext(ctx))
 	})
 }

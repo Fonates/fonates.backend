@@ -97,7 +97,8 @@ func (h *Handlers) ProofHandler(w http.ResponseWriter, r *http.Request) {
 
 	if foundUser.ID == 0 {
 		user.Address = addrHuman
-		if _, err := user.Create(h.Store); err != nil {
+		foundUser, err = user.Create(h.Store)
+		if err != nil {
 			h.response(w, http.StatusInternalServerError, map[string]string{
 				"error": "Error creating user",
 			})
@@ -105,8 +106,8 @@ func (h *Handlers) ProofHandler(w http.ResponseWriter, r *http.Request) {
 		}
 	}
 
-	jwtToken, err := utils.InitJWTGen(h.SharedSecret).CreateToken(tp.Address)
-	if err != nil {
+	jwtToken, errGenerate := utils.InitJWTGen(h.SharedSecret).CreateToken(foundUser.ID)
+	if errGenerate != nil {
 		h.response(w, http.StatusInternalServerError, map[string]string{
 			"error": "Error signing token",
 		})

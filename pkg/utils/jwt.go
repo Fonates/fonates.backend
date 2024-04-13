@@ -12,7 +12,7 @@ type JWTGen struct {
 }
 
 type jwtCustomClaims struct {
-	Address string `json:"address"`
+	UserId string `json:"userId"`
 	jwt.StandardClaims
 }
 
@@ -22,9 +22,11 @@ func InitJWTGen(secret string) *JWTGen {
 	}
 }
 
-func (j *JWTGen) CreateToken(address string) (string, error) {
+func (j *JWTGen) CreateToken(userId uint) (string, error) {
+	id := fmt.Sprintf("%d", userId)
+
 	claims := &jwtCustomClaims{
-		address,
+		id,
 		jwt.StandardClaims{
 			ExpiresAt: time.Now().AddDate(10, 0, 0).Unix(),
 		},

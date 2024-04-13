@@ -4,21 +4,30 @@ import (
 	"errors"
 	"regexp"
 
+	"fonates.backend/pkg/utils"
+	"github.com/google/uuid"
 	"gorm.io/gorm"
 )
 
+const (
+	LINK_INACTIVE = "INACTIVE"
+	LINK_ACTIVE   = "ACTIVE"
+	LINK_BLOCKED  = "BLOCKED"
+)
+
 type DonationLink struct {
-	ID     uint   `json:"id" gorm:"primaryKey;autoIncrement;not null"`
-	Name   string `json:"name" gorm:"unique;not null"`
-	Link   string `json:"link" gorm:"unique;not null"`
-	Status string `json:"status"`
-	UserID uint   `json:"-"`
-	User   User   `gorm:"foreignKey:UserID;references:ID"`
+	ID     uint      `json:"id" gorm:"primaryKey;autoIncrement;not null"`
+	UUID   uuid.UUID `json:"uuid" gorm:"unique;not null"`
+	Name   string    `json:"custom_name"`
+	Link   string    `json:"link" gorm:"unique;not null"`
+	Status string    `json:"status"`
+	UserID uint      `json:"-"`
+	User   User      `gorm:"foreignKey:UserID;references:ID"`
 }
 
 func InitDonationLink() DonationLink {
 	return DonationLink{
-		Status: "INACTIVE",
+		Status: LINK_INACTIVE,
 	}
 }
 
@@ -31,7 +40,7 @@ func (d DonationLink) Validate() bool {
 }
 
 func (d DonationLink) Create(store *gorm.DB) (DonationLink, error) {
-	// d.Name = "dt" + utils.GenerateUniqueID(16)
+	d.Name = "dt" + utils.GenerateUniqueID(16)
 	return d, store.Create(&d).Error
 }
 
