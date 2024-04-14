@@ -2,10 +2,8 @@ package models
 
 import (
 	"errors"
-	"regexp"
 
 	"fonates.backend/pkg/utils"
-	"github.com/google/uuid"
 	"gorm.io/gorm"
 )
 
@@ -16,13 +14,12 @@ const (
 )
 
 type DonationLink struct {
-	ID     uint      `json:"id" gorm:"primaryKey;autoIncrement;not null"`
-	UUID   uuid.UUID `json:"uuid" gorm:"unique;not null"`
-	Name   string    `json:"custom_name"`
-	Link   string    `json:"link" gorm:"unique;not null"`
-	Status string    `json:"status"`
-	UserID uint      `json:"-"`
-	User   User      `gorm:"foreignKey:UserID;references:ID"`
+	ID     uint   `json:"id" gorm:"primaryKey;autoIncrement;not null"`
+	Key    string `json:"key" gorm:"unique;not null"`
+	Name   string `json:"custom_name"`
+	Status string `json:"status"`
+	UserID uint   `json:"-"`
+	User   User   `gorm:"foreignKey:UserID;references:ID"`
 }
 
 func InitDonationLink() DonationLink {
@@ -31,16 +28,10 @@ func InitDonationLink() DonationLink {
 	}
 }
 
-func (d DonationLink) Validate() bool {
-	regexpLink := regexp.MustCompile(`^https:\/\/fonates\.com\/donates\/.*`)
-	// regexpUsername := regexp.MustCompile(`^[a-zA-Z0-9_]{3,16}$`)
-	// isValidAddress := utils.ValidateTonAddress(d.Address)
-	// && regexpUsername.MatchString(d.Username) && isValidAddress
-	return regexpLink.MatchString(d.Link)
-}
-
 func (d DonationLink) Create(store *gorm.DB) (DonationLink, error) {
-	d.Name = "dt" + utils.GenerateUniqueID(16)
+	generatedKey := utils.GenerateUniqueID(16)
+	d.Key = "dl" + generatedKey
+	d.Name = generatedKey
 	return d, store.Create(&d).Error
 }
 
@@ -58,3 +49,11 @@ func (d DonationLink) GetById(store *gorm.DB, id string) (*DonationLink, error) 
 func (d DonationLink) Activate(store *gorm.DB) error {
 	return store.Model(&d).Update("status", "ACTIVE").Error
 }
+
+// func (d DonationLink) Validate() bool {
+// 	regexpLink := regexp.MustCompile(`^https:\/\/fonates\.com\/donates\/.*`)
+// 	regexpUsername := regexp.MustCompile(`^[a-zA-Z0-9_]{3,16}$`)
+// 	isValidAddress := utils.ValidateTonAddress(d.Address)
+// 	regexpUsername.MatchString(d.Username) && isValidAddress
+// 	return regexpLink.MatchString(d.Link)
+// }

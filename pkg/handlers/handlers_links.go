@@ -1,7 +1,6 @@
 package handlers
 
 import (
-	"log"
 	"net/http"
 
 	"fonates.backend/pkg/models"
@@ -10,9 +9,7 @@ import (
 
 func (h *Handlers) CreateLink(w http.ResponseWriter, r *http.Request) {
 	link := models.InitDonationLink()
-	link.UserID = r.Context().Value("userId").(uint)
-
-	log.Printf("User ID: %v", link.UserID)
+	link.UserID = h.getUserId(r)
 
 	crearedLink, err := link.Create(h.Store)
 	if err != nil {
