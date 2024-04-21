@@ -16,7 +16,7 @@ func (m *Middleware) SetHeaders(next http.Handler) http.Handler {
 		w.Header().Set("Access-Control-Allow-Origin", "*")
 
 		if r.Method == "OPTIONS" {
-			w.Header().Set("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, OPTIONS")
+			w.Header().Set("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, OPTIONS, PATCH")
 			w.Header().Set("Access-Control-Allow-Headers", "Content-Type, X-Link-Activation-Key, Access-Control-Allow-Origin, Accpet, Authorization")
 			w.WriteHeader(http.StatusOK)
 			return

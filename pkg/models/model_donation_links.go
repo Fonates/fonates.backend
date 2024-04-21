@@ -14,12 +14,12 @@ const (
 )
 
 type DonationLink struct {
-	ID     uint   `json:"id" gorm:"primaryKey;autoIncrement;not null"`
-	Key    string `json:"key" gorm:"unique;not null"`
-	Name   string `json:"custom_name"`
-	Status string `json:"status"`
-	UserID uint   `json:"-"`
-	User   User   `gorm:"foreignKey:UserID;references:ID"`
+	ID      uint   `json:"id" gorm:"primaryKey;autoIncrement;not null"`
+	KeyName string `json:"key" gorm:"unique;not null"`
+	Name    string `json:"name" gorm:"not null"`
+	Status  string `json:"status"`
+	UserID  uint   `json:"-"`
+	User    User   `gorm:"foreignKey:UserID;references:ID"`
 }
 
 func InitDonationLink() DonationLink {
@@ -29,14 +29,12 @@ func InitDonationLink() DonationLink {
 }
 
 func (d DonationLink) Create(store *gorm.DB) (DonationLink, error) {
-	generatedKey := utils.GenerateUniqueID(16)
-	d.Key = "dl" + generatedKey
-	d.Name = generatedKey
+	d.KeyName = "dl" + utils.GenerateUniqueID(16)
 	return d, store.Create(&d).Error
 }
 
-func (d DonationLink) GetById(store *gorm.DB, id string) (*DonationLink, error) {
-	result := store.Where("id = ?", id).First(&d)
+func (d DonationLink) GetByKey(store *gorm.DB, key string) (*DonationLink, error) {
+	result := store.Where("key_name = ?", key).Preload("User").First(&d)
 	if errors.Is(result.Error, gorm.ErrRecordNotFound) {
 		return nil, nil
 	} else if result.Error != nil {
