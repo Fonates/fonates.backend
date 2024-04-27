@@ -8,6 +8,7 @@ func (r *router) initV1Routes() *mux.Router {
 	r.Router.Use(r.Middleware.SetHeaders)
 
 	r.initLinksRoutes()
+	r.initDonatesRoutes()
 	r.initUsersRoutes()
 	r.initTonProofRoutes()
 
@@ -22,6 +23,16 @@ func (r *router) initLinksRoutes() *mux.Router {
 		linksRoutes.HandleFunc("/{slug}/status", r.Handlers.GetLinkStatus).Methods("GET", "OPTIONS")
 		linksRoutes.HandleFunc("/{slug}/key", r.Middleware.Auth(r.Handlers.GetKeyActivation)).Methods("GET", "OPTIONS")
 		linksRoutes.HandleFunc("/{slug}/activate", r.Middleware.Auth(r.Handlers.ActivateLink)).Methods("PATCH", "OPTIONS")
+	}
+
+	return r.Router
+}
+
+func (r *router) initDonatesRoutes() *mux.Router {
+	donates := r.Router.PathPrefix("/donates").Subrouter()
+	{
+		donates.HandleFunc("/create", r.Middleware.Auth(r.Handlers.CreateDonate)).Methods("POST", "OPTIONS")
+		donates.HandleFunc("/{link_id}/stream", r.Middleware.Auth(r.Handlers.DonatesStreaming)).Methods("GET", "OPTIONS")
 	}
 
 	return r.Router
@@ -45,20 +56,3 @@ func (r *router) initTonProofRoutes() *mux.Router {
 
 	return r.Router
 }
-
-// func (r *router) initProfileRoutes() *mux.Router {
-// 	profileRoutes := r.Router.PathPrefix("/profile").Subrouter()
-// 	{
-// 		profileRoutes.HandleFunc("/create", r.Handlers.CreateProfile).Methods("POST", "OPTIONS")
-// 		profileRoutes.HandleFunc("/{id}", r.Handlers.GetProfile).Methods("GET", "OPTIONS")
-// 	}
-// 	return r.Router
-// }
-
-// func (r *router) initPluginRoutes() *mux.Router {
-// 	pluginRoutes := r.Router.PathPrefix("/plugin").Subrouter()
-// 	{
-// 		pluginRoutes.HandleFunc("/{address}/generate", r.Handlers.GeneratePlugin).Methods("GET")
-// 	}
-// 	return r.Router
-// }

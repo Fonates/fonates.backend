@@ -45,5 +45,6 @@ func (m *MariaDB) Migration(db *gorm.DB) error {
 		models.User{},
 		models.DonationLink{},
 		models.KeysActivationLink{},
+		models.Donate{},
 	)
 }

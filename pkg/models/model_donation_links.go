@@ -33,6 +33,10 @@ func (d DonationLink) Create(store *gorm.DB) (DonationLink, error) {
 	return d, store.Create(&d).Error
 }
 
+func (d *DonationLink) GetById(store *gorm.DB) error {
+	return store.Preload("User").First(&d, d.ID).Error
+}
+
 func (d DonationLink) GetByKey(store *gorm.DB, key string) (*DonationLink, error) {
 	result := store.Where("key_name = ?", key).Preload("User").First(&d)
 	if errors.Is(result.Error, gorm.ErrRecordNotFound) {
