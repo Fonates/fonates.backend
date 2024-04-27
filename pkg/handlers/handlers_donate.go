@@ -6,7 +6,6 @@ import (
 	"io"
 	"log"
 	"net/http"
-	"strconv"
 	"time"
 
 	"fonates.backend/pkg/models"
@@ -82,9 +81,8 @@ func (h *Handlers) CreateDonate(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	var strLinkId = fmt.Sprint(donate.DonationLinkID)
-	if _, ok := dataChan[strLinkId]; !ok {
-		dataChan[strLinkId] = make(chan Alert)
+	if _, ok := dataChan[donationLink.KeyName]; !ok {
+		dataChan[donationLink.KeyName] = make(chan Alert)
 	}
 
 	go func(c chan Alert) {
@@ -92,7 +90,7 @@ func (h *Handlers) CreateDonate(w http.ResponseWriter, r *http.Request) {
 			Status: ALERT_STATUS_WAIT,
 			Data:   donate,
 		}
-	}(dataChan[strLinkId])
+	}(dataChan[donationLink.KeyName])
 
 	h.response(w, http.StatusOK, map[string]string{
 		"status": "ok",
@@ -101,38 +99,24 @@ func (h *Handlers) CreateDonate(w http.ResponseWriter, r *http.Request) {
 
 func (h *Handlers) DonatesStreaming(w http.ResponseWriter, r *http.Request) {
 	vars := mux.Vars(r)
-	linkIdStr := vars["link_id"]
+	link_key := vars["link_key"]
 
-	if linkIdStr == "" {
+	if link_key == "" {
 		h.response(w, http.StatusBadRequest, map[string]string{
 			"error": "Link ID is required",
 		})
 		return
 	}
 
-	linkId, err := strconv.Atoi(linkIdStr)
-	if err != nil {
-		h.response(w, http.StatusBadRequest, map[string]string{
-			"error": "Link ID must be a number",
-		})
-		return
-	}
-
-	var donationLink = models.InitDonationLink()
-	donationLink.ID = uint(linkId)
-	if err := donationLink.GetById(h.Store); err != nil {
+	donationLink, err := models.InitDonationLink().GetByKey(h.Store, link_key)
+	if err != nil || donationLink == nil {
 		h.response(w, http.StatusInternalServerError, map[string]string{
 			"error": "Error getting donation link",
 		})
 		return
 	}
 
-	if donationLink.UserID != h.getUserId(r) {
-		h.response(w, http.StatusForbidden, map[string]string{
-			"error": "You don't have access to this link",
-		})
-		return
-	}
+	log.Default().Print("DONATION LINK: ", donationLink)
 
 	if donationLink.Status != models.LINK_ACTIVE || donationLink.Status == models.LINK_BLOCKED {
 		h.response(w, http.StatusBadRequest, map[string]string{
@@ -143,14 +127,14 @@ func (h *Handlers) DonatesStreaming(w http.ResponseWriter, r *http.Request) {
 
 	w.Header().Set("Content-Type", "text/event-stream")
 	w.Header().Set("Cache-Control", "no-cache")
-	fmt.Fprintf(w, "data: %s\n\n", "Stream opened")
+	fmt.Fprintf(w, "data: %s\n\n", "heartbeat")
 
 	var ticker = time.NewTicker(time.Second * 1)
 	defer ticker.Stop()
 
 	for {
 		select {
-		case alert := <-dataChan[linkIdStr]:
+		case alert := <-dataChan[link_key]:
 			log.Default().Print("GET CHANNEL: ", alert)
 			if alert.Status != ALERT_STATUS_WAIT {
 				continue
@@ -162,7 +146,7 @@ func (h *Handlers) DonatesStreaming(w http.ResponseWriter, r *http.Request) {
 				continue
 			}
 
-			delete(dataChan, linkIdStr)
+			delete(dataChan, link_key)
 
 			fmt.Fprintf(w, "data: %s\n\n", jsonData)
 			if flusher, ok := w.(http.Flusher); ok {

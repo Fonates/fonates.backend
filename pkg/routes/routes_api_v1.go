@@ -32,7 +32,7 @@ func (r *router) initDonatesRoutes() *mux.Router {
 	donates := r.Router.PathPrefix("/donates").Subrouter()
 	{
 		donates.HandleFunc("/create", r.Middleware.Auth(r.Handlers.CreateDonate)).Methods("POST", "OPTIONS")
-		donates.HandleFunc("/{link_id}/stream", r.Middleware.Auth(r.Handlers.DonatesStreaming)).Methods("GET", "OPTIONS")
+		donates.HandleFunc("/{link_key}/stream", r.Handlers.DonatesStreaming).Methods("GET", "OPTIONS")
 	}
 
 	return r.Router
